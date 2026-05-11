@@ -1,0 +1,70 @@
+---
+// src/components/Navbar.astro
+import Logo from './Logo.astro';
+
+const { lang = 'fr', t } = Astro.props;
+const path = Astro.url.pathname;
+
+// Build URL for the alternate language
+function altUrl(currentPath: string, currentLang: string): string {
+  if (currentLang === 'fr') {
+    if (currentPath === '/' || currentPath === '')        return '/en/';
+    if (currentPath.startsWith('/services'))             return '/en/services';
+    if (currentPath.startsWith('/realisations'))         return '/en/projects';
+    return '/en/';
+  } else {
+    if (currentPath === '/en/' || currentPath === '/en') return '/';
+    if (currentPath.startsWith('/en/services'))          return '/services';
+    if (currentPath.startsWith('/en/projects'))          return '/realisations';
+    return '/';
+  }
+}
+
+// Nav link hrefs per language
+const links = lang === 'fr'
+  ? { home: '/', services: '/services', projects: '/realisations', contact: '/#contact' }
+  : { home: '/en/', services: '/en/services', projects: '/en/projects', contact: '/en/#contact' };
+
+const otherLang    = lang === 'fr' ? 'en' : 'fr';
+const otherLangUrl = altUrl(path, lang);
+---
+
+<nav class="navbar">
+  <div class="nav-inner">
+    <a href={links.home} class="nav-logo" aria-label="VP Bâtiment — Accueil">
+      <Logo />
+    </a>
+
+    <div class="nav-right">
+      <div class="nav-links" id="navLinks">
+        <a href={links.home}     aria-current={path === links.home     ? 'page' : undefined}>{t.nav.home}</a>
+        <a href={links.services} aria-current={path.startsWith(lang === 'fr' ? '/services' : '/en/services') ? 'page' : undefined}>{t.nav.services}</a>
+        <a href={links.projects} aria-current={path.startsWith(lang === 'fr' ? '/realisations' : '/en/projects') ? 'page' : undefined}>{t.nav.projects}</a>
+        <a href={links.contact} class="nav-cta">{t.nav.cta}</a>
+      </div>
+
+      <!-- Language switcher: real links, no JS needed -->
+      <div class="lang-switcher" aria-label="Language">
+        <a href={lang === 'fr' ? path : otherLangUrl}
+           class={`lang-btn ${lang === 'fr' ? 'active' : ''}`}
+           hreflang="fr">FR</a>
+        <a href={lang === 'en' ? path : otherLangUrl}
+           class={`lang-btn ${lang === 'en' ? 'active' : ''}`}
+           hreflang="en">EN</a>
+      </div>
+
+      <button class="hamburger" id="hamburger" aria-label="Menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<script>
+  const btn   = document.getElementById('hamburger');
+  const links = document.getElementById('navLinks');
+  btn?.addEventListener('click', () => {
+    const open = links?.classList.toggle('open');
+    btn.setAttribute('aria-expanded', String(open));
+  });
+</script>

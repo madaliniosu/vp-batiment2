@@ -1,0 +1,23 @@
+---
+// src/components/Footer.astro
+import Logo from './Logo.astro';
+
+const { lang = 'fr', t } = Astro.props;
+const links = lang === 'fr'
+  ? { home: '/', services: '/services', projects: '/realisations' }
+  : { home: '/en/', services: '/en/services', projects: '/en/projects' };
+---
+
+<footer class="footer">
+  <div class="footer-inner">
+    <a href={links.home} aria-label="Accueil">
+      <Logo color="light" />
+    </a>
+    <nav class="footer-nav" aria-label="Footer">
+      <a href={links.home}>{t.nav.home}</a>
+      <a href={links.services}>{t.nav.services}</a>
+      <a href={links.projects}>{t.nav.projects}</a>
+    </nav>
+    <p class="footer-copy">{t.footer.copy}</p>
+  </div>
+</footer>

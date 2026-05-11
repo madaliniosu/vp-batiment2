@@ -1,0 +1,8 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ProjectsContent from '../components/pages/ProjectsContent.astro';
+import { fr } from '../i18n/translations.js';
+---
+<Layout title={fr.meta.projects} lang="fr" t={fr}>
+  <ProjectsContent t={fr} lang="fr" />
+</Layout>

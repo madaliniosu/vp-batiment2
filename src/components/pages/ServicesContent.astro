@@ -1,0 +1,51 @@
+---
+// src/components/pages/ServicesContent.astro
+import ContactForm from '../ContactForm.astro';
+
+const { t, lang } = Astro.props;
+const sp = t.servicesPage;
+---
+
+<!-- ── PAGE HEADER ────────────────────────────────── -->
+<div class="page-header">
+  <div class="container">
+    <span class="label label--light" style="display:block;margin-bottom:1rem;">{sp.header.label}</span>
+    <h1>{sp.header.h1[0]}<br><span>{sp.header.h1[1]}</span></h1>
+    <p>{sp.header.p}</p>
+  </div>
+</div>
+
+<!-- ── SERVICE CARDS ──────────────────────────────── -->
+<section class="services-full">
+  <div class="services-full-grid">
+    {sp.cards.map((card: any) => (
+      <div class="service-full-card">
+        <span class="tag">{card.tag}</span>
+        <h3>{card.h3}</h3>
+        <p>{card.p}</p>
+        <ul class="service-detail-list">
+          {card.li.map((item: string) => <li>{item}</li>)}
+        </ul>
+      </div>
+    ))}
+  </div>
+</section>
+
+<!-- ── PROCESS ────────────────────────────────────── -->
+<section class="process">
+  <div class="process-inner">
+    <h2>{sp.process.h2}</h2>
+    <div class="process-steps">
+      {sp.process.steps.map((step: any) => (
+        <div class="process-step">
+          <div class="step-num">{step.num} — {step.label}</div>
+          <div class="step-title">{step.title}</div>
+          <div class="step-desc">{step.desc}</div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<!-- ── CONTACT ────────────────────────────────────── -->
+<ContactForm t={t} variant="services" formName={`contact-services-${lang}`} />

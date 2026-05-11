@@ -1,0 +1,40 @@
+---
+// src/components/pages/ProjectsContent.astro
+import ContactForm from '../ContactForm.astro';
+
+const { t, lang } = Astro.props;
+const pp = t.projectsPage;
+const pvClasses = ['pv-1','pv-2','pv-3','pv-4','pv-5','pv-6'];
+---
+
+<!-- ── PAGE HEADER ────────────────────────────────── -->
+<div class="page-header">
+  <div class="container">
+    <span class="label label--light" style="display:block;margin-bottom:1rem;">{pp.header.label}</span>
+    <h1>{pp.header.h1[0]}<br><span>{pp.header.h1[1]}</span></h1>
+    <p>{pp.header.p}</p>
+  </div>
+</div>
+
+<!-- ── PROJECT GRID ───────────────────────────────── -->
+<section class="projects-section">
+  <div class="projects-grid">
+    {pp.items.map((proj: any, i: number) => (
+      <article class="project-card">
+        <div class={`project-visual ${pvClasses[i]}`}>
+          <div class="project-visual-pattern"></div>
+          <div class="project-visual-num">0{i + 1}</div>
+          <span class="project-type-tag">{proj.type}</span>
+        </div>
+        <div class="project-info">
+          <div class="project-title">{proj.title}</div>
+          <div class="project-meta">{proj.meta}</div>
+          <p class="project-desc">{proj.desc}</p>
+        </div>
+      </article>
+    ))}
+  </div>
+</section>
+
+<!-- ── CONTACT ────────────────────────────────────── -->
+<ContactForm t={t} variant="projects" formName={`contact-projects-${lang}`} />

@@ -1,0 +1,21 @@
+---
+// src/components/Logo.astro
+// Props: color = 'dark' | 'light'
+const { color = 'dark' } = Astro.props;
+const textFill = color === 'light' ? '#FFFFFF' : '#18202E';
+---
+<svg height="30" viewBox="0 0 220 38" xmlns="http://www.w3.org/2000/svg" aria-label="VP Bâtiment">
+  <text
+    x="0" y="32"
+    font-family="'Barlow Condensed','Arial Narrow',sans-serif"
+    font-weight="600" font-size="36"
+    fill={textFill}
+  >VP</text>
+  <line x1="55" y1="3" x2="55" y2="35" stroke="#C8963A" stroke-width="1.5"/>
+  <text
+    x="66" y="28"
+    font-family="'Barlow Condensed','Arial Narrow',sans-serif"
+    font-weight="500" font-size="21"
+    fill={textFill} letter-spacing="4"
+  >BÂTIMENT</text>
+</svg>

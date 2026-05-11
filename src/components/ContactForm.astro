@@ -1,0 +1,133 @@
+---
+// src/components/ContactForm.astro
+// variant: 'home' | 'services' | 'projects'
+const { t, variant = 'home', formName = 'contact' } = Astro.props;
+const f    = t.form;
+const c    = t.contact[variant];
+const opts = variant === 'services' ? f.optionsSvc : f.options;
+const ph   = variant === 'services' ? f.phMsgSvc : variant === 'projects' ? f.phMsgProj : f.phMsg;
+const submit = variant === 'services' ? f.submitSvc : variant === 'projects' ? f.submitProj : f.submitHome;
+const cd   = t.contact.details;
+---
+
+<section class="contact-section" id="contact">
+  <div class="contact-inner">
+
+    <!-- Left: copy + details -->
+    <div class="contact-left">
+      <span class="label" style="display:block;margin-bottom:.75rem;">{c.label}</span>
+      <span class="gold-rule"></span>
+      <h2>{c.h2[0]}<br>{c.h2[1]}</h2>
+      <p>{c.p}</p>
+      <div class="contact-detail">
+        <div class="contact-detail-item">
+          <span class="contact-detail-label">Tél.</span>
+          <span class="contact-detail-val">{cd.tel}</span>
+        </div>
+        <div class="contact-detail-item">
+          <span class="contact-detail-label">{cd.zoneLabel === 'Zone' ? 'Email' : 'Email'}</span>
+          <span class="contact-detail-val">{cd.email}</span>
+        </div>
+        <div class="contact-detail-item">
+          <span class="contact-detail-label">{cd.zoneLabel}</span>
+          <span class="contact-detail-val">{cd.zone}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: form -->
+    <div class="contact-form-wrap">
+      <!--
+        Netlify Forms: the `netlify` attribute tells Netlify to process this form.
+        The hidden `form-name` field is required for AJAX submission.
+        The `netlify-honeypot` field silently blocks bots.
+      -->
+      <form
+        name={formName}
+        method="POST"
+        data-netlify="true"
+        netlify-honeypot="bot-field"
+        class="contact-form"
+        id={`form-${variant}`}
+      >
+        <input type="hidden" name="form-name" value={formName} />
+        <p style="display:none"><label>Don't fill this: <input name="bot-field" /></label></p>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for={`${variant}-first`}>{f.first}</label>
+            <input class="form-input" id={`${variant}-first`} name="first-name" type="text" placeholder={f.phFirst} required />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for={`${variant}-last`}>{f.last}</label>
+            <input class="form-input" id={`${variant}-last`} name="last-name" type="text" placeholder={f.phLast} required />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for={`${variant}-email`}>{f.email}</label>
+            <input class="form-input" id={`${variant}-email`} name="email" type="email" placeholder={f.phEmail} required />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for={`${variant}-phone`}>{f.phone}</label>
+            <input class="form-input" id={`${variant}-phone`} name="phone" type="tel" placeholder={f.phPhone} />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for={`${variant}-type`}>
+            {variant === 'services' ? f.service : f.type}
+          </label>
+          <select class="form-select" id={`${variant}-type`} name="project-type">
+            <option value="" disabled selected>{f.select}</option>
+            {opts.map((opt: string) => <option value={opt}>{opt}</option>)}
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for={`${variant}-msg`}>{f.message}</label>
+          <textarea class="form-textarea" id={`${variant}-msg`} name="message" placeholder={ph} required></textarea>
+        </div>
+
+        <button type="submit" class="form-submit" data-label={submit} data-sending={f.sending} data-sent={f.sent}>
+          {submit}
+        </button>
+        <p class="form-note">{f.note}</p>
+      </form>
+
+      <div class="form-success" id={`success-${variant}`}>
+        ✓ &nbsp; {f.sent}
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll('.contact-form').forEach(form => {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const el     = e.currentTarget as HTMLFormElement;
+      const btn    = el.querySelector('.form-submit') as HTMLButtonElement;
+      const id     = el.id.replace('form-', '');
+      const success = document.getElementById(`success-${id}`);
+
+      btn.textContent = btn.dataset.sending ?? '...';
+      btn.disabled    = true;
+
+      try {
+        await fetch('/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams(new FormData(el) as any).toString(),
+        });
+        el.style.display     = 'none';
+        if (success) success.classList.add('visible');
+      } catch {
+        btn.textContent = btn.dataset.label ?? 'Send';
+        btn.disabled    = false;
+      }
+    });
+  });
+</script>
